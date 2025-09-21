@@ -1,0 +1,999 @@
+{
+  "name": "NCK Order Mgmt",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return {\n  firstName: items[0].json[\"First Name\"],\n  lastName: items[0].json[\"Last Name\"],\n  emailAddress: items[0].json[\"Email Address\"],\n  phoneNumber: items[0].json[\"Phone Number\"],\n  cateringRequestID: items[0].json[\"Catering Request ID\"],\n  submittedAt: items[0].json.submittedAt,\n  formMode: items[0].json.formMode\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        48
+      ],
+      "id": "2cea47d0-8e8b-45e9-975b-9b5c11f7d4d9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "formTitle": "Catering Request Form",
+        "formDescription": "Catering request form submission from nutmegcreolekitchen.com",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name"
+            },
+            {
+              "fieldLabel": "Last Name"
+            },
+            {
+              "fieldLabel": "Email Address"
+            },
+            {
+              "fieldLabel": "Phone Number"
+            },
+            {
+              "fieldType": "hiddenField",
+              "fieldName": "cateringRequest ID",
+              "fieldValue": "12345"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        48
+      ],
+      "id": "42f81bb9-f9b7-4d54-8ae7-d192b08f7737",
+      "name": "On form submission",
+      "webhookId": "12834b76-1618-4d94-814d-6ebc5c28d8c8"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ",
+          "mode": "list",
+          "cachedResultName": "Catering Customer Database ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Customer Info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "firstName": "={{ $json.firstName }}",
+            "lastName": "={{ $json.lastName }}",
+            "phoneNumber": "={{ $json.phoneNumber }}",
+            "emailAddress": "={{ $json.emailAddress }}",
+            "cateringRequestID": "={{ $json.cateringRequestID }}",
+            "submittedAt": "={{ $json.submittedAt }}",
+            "formMode": "={{ $json.formMode }}",
+            "error": "={{ $json.submittedAt }}"
+          },
+          "matchingColumns": [
+            "emailAddress"
+          ],
+          "schema": [
+            {
+              "id": "firstName",
+              "displayName": "firstName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lastName",
+              "displayName": "lastName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "emailAddress",
+              "displayName": "emailAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phoneNumber",
+              "displayName": "phoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cateringRequestID",
+              "displayName": "cateringRequestID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "formMode",
+              "displayName": "formMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "myNewField",
+              "displayName": "myNewField",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        48
+      ],
+      "id": "1503a3b3-3fe7-4c0e-a7a7-cb05595b3cee",
+      "name": "Catering Customer Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PS7OyHrPKyYsZ8Mk",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        528
+      ],
+      "id": "756cc310-421c-4c71-b03d-dd7894a628c9",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E3H6H4l7u5Zh1FhN",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=",
+        "recipientPhoneNumber": "=",
+        "textBody": "GREAT NEWS! YOU HAVE JUST RECEIVED ANOTHER CATERING REQUEST!",
+        "additionalFields": {
+          "previewUrl": false
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "53e2bfb0-b48d-4fdc-947e-ba5424bbd921",
+      "name": "Send Whatsapp Msg",
+      "webhookId": "bfb8e666-f376-4002-a6c2-c0b297467238",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "gwbR7X4eTd3kcUzZ",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "phoneNumberId": "=3052402937",
+        "recipientPhoneNumber": "16468250005",
+        "message": "ALERT! There is an error in the NCK Go workflow.  Please resolve issue ASAP!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        160
+      ],
+      "id": "5aece8d3-02cb-4f57-b0df-30b215fd5e11",
+      "name": "Send Error Msg",
+      "webhookId": "e69e1b4b-de0d-415e-8299-cf9ccf4af17c",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "gwbR7X4eTd3kcUzZ",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1632,
+        736
+      ],
+      "id": "7beb6960-bf8f-4871-810a-0fe6670770bd",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "keql7cuGhF6d180I",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "phoneNumberId": "=3052402937",
+        "recipientPhoneNumber": "16468250005",
+        "message": "ALERT! There is an error in the NCK Go workflow.  Please resolve issue ASAP!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        656
+      ],
+      "id": "13503bdb-df4a-4780-af65-1ca987ce0c91",
+      "name": "Send Error Msg1",
+      "webhookId": "e69e1b4b-de0d-415e-8299-cf9ccf4af17c",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "gwbR7X4eTd3kcUzZ",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        736
+      ],
+      "id": "17857105-7a95-4d0e-941a-36cfd70c13ba",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GPn8ifVKLxNGgU0K",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba49a6a8-cac5-4309-b808-0861b6214c5d",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "1d4b4cef-176e-47ec-ab26-8e02ad861bd9",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        528
+      ],
+      "id": "6587b13e-2d9c-4191-821d-9cb7d18772d7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d5b2002-fa3f-44ad-9113-7797e0ea827b",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "c0be52ad-cace-4a2d-b372-af6c55568ba7",
+              "name": "firstName",
+              "value": "={{ $json.firstName }}",
+              "type": "string"
+            },
+            {
+              "id": "85e8fb18-5ccd-4b9b-baef-a8018a49cce0",
+              "name": "lastName",
+              "value": "={{ $json.lastName }}",
+              "type": "string"
+            },
+            {
+              "id": "6f9dbe34-3a3b-4a40-9792-197ff074a6fb",
+              "name": "emailAddress",
+              "value": "={{ $json.emailAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "108a918b-4caa-434b-8308-0a22f68b10a5",
+              "name": "messageId",
+              "value": "={{ $json.messageId }}",
+              "type": "string"
+            },
+            {
+              "id": "db44d3ca-bb62-4e29-be16-8ec2729d9b2d",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "2d41e9a8-28f9-4f70-a781-5e9972dc8bda",
+              "name": "emailBody",
+              "value": "={{ $json.emailBody }}",
+              "type": "string"
+            },
+            {
+              "id": "57fcad07-50c3-43c2-bfb7-d581125de4c6",
+              "name": "emailBodyHtml",
+              "value": "={{ $json.emailBodyHtml }}",
+              "type": "string"
+            },
+            {
+              "id": "9d3686be-f135-4619-bcfb-aa636c412cde",
+              "name": "phoneNumber",
+              "value": "={{ $('Combine Data').item.json.phoneNumber }}",
+              "type": "number"
+            },
+            {
+              "id": "8004c790-3bad-4f47-8273-d9b93aa4a2bf",
+              "name": "userEmail",
+              "value": "={{ $('Combine Data').item.json.userEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "3548e330-3041-435e-a643-15b148a94ffa",
+              "name": "userEmail",
+              "value": "={{ $('Combine Data').first().json.userEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "4ee17d7b-47ea-4ce5-819c-f0e9dd2181a5",
+              "name": "customerExists",
+              "value": "={{ $json.customerExists }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1552,
+        528
+      ],
+      "id": "2e1f2167-3169-44ba-877c-85efdaee74cb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputData = $input.all();\nconst inputJson = inputData[0].json;\n\n// Use messageId as sessionId, fallback to unique ID if missing\nconst sessionId = inputJson.messageId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;\n\n// Extract message body fields\nconst emailBody = inputJson.text || inputJson.emailBody || 'No message body found';\nconst emailBodyHtml = inputJson.html || inputJson.emailBodyHtml || '';\n\n// Return modified JSON\nreturn [{\n  json: {\n    ...inputJson,\n    sessionId,\n    emailBody,\n    emailBodyHtml,\n    debugInput: JSON.stringify(inputJson) // For debugging\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        528
+      ],
+      "id": "a1585a92-4a85-4303-9d24-e92189977ad8",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ",
+          "mode": "list",
+          "cachedResultName": "Catering Customer Database ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Customer Info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nKUt2db7rTUepDStaYzNiGK8bZ1uFyWK39msb282GGQ/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        624
+      ],
+      "id": "415ed26c-8f2f-4e17-ad75-93ee905d9da7",
+      "name": "Catering Customer Data1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PS7OyHrPKyYsZ8Mk",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get row(s) in sheet in Google Sheets",
+        "documentId": {
+          "__rl": true,
+          "value": "1m9jYd8TzY2g4_F40o8nsgsoyRSJ1hJYGvoni3OZDEqM",
+          "mode": "list",
+          "cachedResultName": "NCK Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1m9jYd8TzY2g4_F40o8nsgsoyRSJ1hJYGvoni3OZDEqM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "NCK Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1m9jYd8TzY2g4_F40o8nsgsoyRSJ1hJYGvoni3OZDEqM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1952,
+        736
+      ],
+      "id": "dd8af6da-d3bb-4f1f-83fb-497680ae4371",
+      "name": "NCK Knowledge Base",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PS7OyHrPKyYsZ8Mk",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.emailAddress }}",
+        "subject": "={{ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        736
+      ],
+      "id": "22773d98-882a-4102-9fc3-c897d6847b37",
+      "name": "Send a message in Gmail1",
+      "webhookId": "804e9c84-ae34-4b97-a992-781260b38b28",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "srqsA6snTd0DQrnE",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Receive Catering Request\n1. Place catering request form data in google sheets\n2. Reply to requestor with a warm professional email response\n3. Notify NCK that a catering services have been requested via Whatsapp msg\n4. Log any errors in this workflow to technical support via whatsapp msg; wait for reply.\n",
+        "height": 512,
+        "width": 1168,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "d214ce35-b349-4371-951a-894489aa0c5d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Reply to Incoming Emails \n**1. Respond to inquiries related to all things Nutmeg Creole Kitchen ",
+        "height": 560,
+        "width": 2208,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "edcb0c68-41ef-40e2-b31a-68d779de52ae",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.emailAddress }}",
+        "subject": "Catering Request - Nutmeg Creole Kitchen",
+        "message": "=Dear {{ $('Code').item.json.firstName }} {{ $('Code').item.json.lastName }},\n\nThank you for choosing Nutmeg Creole Kitchen for your event! We've received your catering request {{ $('Code').item.json.cateringRequestID }} and are thrilled to help make your event a delicious success. The first step is to choose you food items; you can find our catering menu by using this link (**[webpage link]**). \n\nAt Nutmeg Creole Kitchen, we specialize in authentic Creole cuisine, bringing vibrant flavors and warm hospitality to every event.\n\nWe'll follow up soon to discuss details and ensure everything is perfect for your event. If you have any questions, feel free to call us at **437-601-9004**\n\nWarm regards,\n**The Nutmeg Creole Kitchen Team*",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        848,
+        48
+      ],
+      "id": "ce9021b2-1918-4c8c-bcbd-71e5c3d9400d",
+      "name": "Send a message",
+      "webhookId": "f70f42cc-756f-4b32-b3e1-f14b4ae3d2c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E3H6H4l7u5Zh1FhN",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=3052402937",
+        "recipientPhoneNumber": "=6468250005",
+        "textBody": "GREAT NEWS! YOU HAVE JUST RECEIVED ANOTHER CATERING REQUEST!",
+        "additionalFields": {
+          "previewUrl": false
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        464
+      ],
+      "id": "025a4698-3029-4164-ae8f-45286e7d314e",
+      "name": "Send Whatsapp Msg1",
+      "webhookId": "bfb8e666-f376-4002-a6c2-c0b297467238",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "gwbR7X4eTd3kcUzZ",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A customer has sent an email inquiry. Please respond to their questions or comments using information from the nck knowledge base tool, then send a reply email using the Send Gmail tool. Keep responses brief and answer the questions asked only, do not add additional information that does not relate to the inquiry. \n\nCustomer details and message are available in the input data.",
+        "options": {
+          "systemMessage": "You are a customer service representative for Nutmeg Creole Kitchen.\n\nThe customer's email details:\n- Name: {{ firstName }} {{ lastName }}\n- Email: {{ emailAddress }}\n- Message: {{ emailBody }}\n\nINSTRUCTIONS:\n1. Read the customer's actual message above\n2. Search the Google Sheets knowledge base for relevant information\n3. Generate a helpful response\n4. Use the Send Gmail tool with EXACTLY these parameters:\n   - to: {{ emailAddress }}\n   - subject: Re: Hours and Menu Inquiry\n   - message: [your generated response]\n\nCRITICAL: Use the exact email address {{ emailAddress }} in the \"to\" field when sending the reply.\n\nIf the customer asks any questions about Nutmeg Creole Kitchen including menu, pricing, or policies, search the knowledge base first for accurate information. Only answer the question or address the inquiry specifically.  Keep all responses brief and concise."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        528
+      ],
+      "id": "517550ff-0c57-4c26-8ba7-15db428577c0",
+      "name": "NCK Go 1",
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b116d2e-690b-42af-ae4e-afba084cacc9",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "ddfeed84-be69-4c1c-bbd2-935f930f9d89",
+              "name": "emailBody",
+              "value": "={{ $json.emailBody }}",
+              "type": "string"
+            },
+            {
+              "id": "6f5fd70e-0ab3-40e8-b496-0b1cbba7dc35",
+              "name": "emailBodyHtml",
+              "value": "={{ $json.emailBodyHtml }}",
+              "type": "string"
+            },
+            {
+              "id": "b98fded5-5418-46e0-a744-1c33988538ad",
+              "name": "messageId",
+              "value": "={{ $json.messageId }}",
+              "type": "string"
+            },
+            {
+              "id": "15a106db-3361-4742-8d3a-7d560d0bf178",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "f882a97f-2f49-49e3-b78a-c94c1ee6385e",
+              "name": "customerExists",
+              "value": "={{ $json.customerExists }}",
+              "type": "string"
+            },
+            {
+              "id": "a3e05a6b-f368-48d4-b8b5-d26182cb73a9",
+              "name": "firstName",
+              "value": "={{ $json.firstName }}",
+              "type": "string"
+            },
+            {
+              "id": "442e6bed-dbfb-47e8-8abd-9cd79240adaf",
+              "name": "lastName",
+              "value": "={{ $json.lastName }}",
+              "type": "string"
+            },
+            {
+              "id": "a7c2cfc3-f219-4407-b734-9eb2b5f68919",
+              "name": "emailAddress",
+              "value": "={{ $json.emailAddress }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        528
+      ],
+      "id": "6d1422dc-c37c-4ac5-bd4d-7f20646ca77b",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        528
+      ],
+      "id": "42e55313-de92-47af-8b66-7c32b44916d5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergeData = $input.all();\nconsole.log('Merge Input:', JSON.stringify(mergeData, null, 2));\n\nconst codeData = mergeData[0]?.json || {};\nconst lookupData = mergeData[1]?.json || {};\n\nreturn [{\n  json: {\n    sessionId: codeData.sessionId || '',\n    emailBody: codeData.emailBody || '',\n    emailBodyHtml: codeData.emailBodyHtml || '',\n    userEmail: codeData.from?.value?.[0]?.address || '', // Directly pull from Gmail Trigger\n    messageId: codeData.messageId || '',\n    row_number: lookupData.row_number || '',\n    firstName: lookupData.firstName || '',\n    lastName: lookupData.lastName || '',\n    emailAddress: lookupData.emailAddress || '',\n    phoneNumber: lookupData.phoneNumber || '',\n    cateringRequestID: lookupData.cateringRequestID || '',\n    submittedAt: lookupData.submittedAt || '',\n    formMode: lookupData.formMode || '',\n    error: lookupData.error || '',\n    myNewField: lookupData.myNewField || '',\n    customerExists: lookupData.emailAddress ? 'true' : 'false'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        528
+      ],
+      "id": "fd9fe588-c672-4817-b345-4f2256dcaab0",
+      "name": "Combine Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Catering Customer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catering Customer Data": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "NCK Go 1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "NCK Go 1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Catering Customer Data1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "NCK Go 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catering Customer Data1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "NCK Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "NCK Go 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail1": {
+      "ai_tool": [
+        [
+          {
+            "node": "NCK Go 1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Msg",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NCK Go 1": {
+      "main": [
+        [
+          {
+            "node": "Send Whatsapp Msg1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Msg1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Combine Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Data": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 1
+  },
+  "versionId": "65581847-be42-457d-90b0-6f8f6332286a",
+  "meta": {
+    "templateId": "rag-starter-template",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77e7f64225d37b4a04ccd4430249802728e13171f35d4d2b3f1a8509f57c6ece"
+  },
+  "id": "6y1OAaDaKyZ2uSKv",
+  "tags": []
+}

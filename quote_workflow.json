@@ -1,0 +1,308 @@
+{
+  "name": "AI agent chat",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "catering-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "63abd86f-b03b-4ad8-93ab-ea7c250b9956",
+      "name": "1. Webhook - Catering Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        -256
+      ],
+      "webhookId": "7ddf0485-c10a-4264-99b7-c6f0337389e2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and format the catering request data (TEMPORARY STORAGE ONLY)\nconst formData = $input.first().json.body;\n\n// Generate unique token for secure web access\nconst crypto = require('crypto');\nconst secureToken = crypto.randomBytes(32).toString('hex');\n\n// Format menu items\nlet menuItemsFormatted = '';\nlet totalAmount = 0;\n\nif (formData.menu_items && Array.isArray(formData.menu_items)) {\n  formData.menu_items.forEach(item => {\n    const itemTotal = item.quantity * item.price;\n    totalAmount += itemTotal;\n    menuItemsFormatted += `• ${item.name} - Qty: ${item.quantity} @ $${item.price} = $${itemTotal.toFixed(2)}\\n`;\n  });\n}\n\n// Calculate tax (13% - adjust as needed)\nconst taxRate = 0.13;\nconst taxAmount = totalAmount * taxRate;\nconst finalTotal = totalAmount + taxAmount;\n\n// Format the quote data for TEMPORARY storage (not permanent DB yet)\nconst quoteData = {\n  request_id: formData.request_id || `CR-${Date.now()}`,\n  event_date: formData.event_date,\n  event_time: formData.event_time,\n  catering_type: formData.catering_type,\n  customer_name: formData.customer_name || 'Customer',\n  customer_email: formData.customer_email,\n  customer_phone: formData.customer_phone,\n  street_address: formData.street_address || '',\n  city: formData.city || '',\n  postal_code: formData.postal_code || '',\n  allergies: formData.allergies || 'No',\n  special_instructions: formData.special_instructions || 'None',\n  menu_items: formData.menu_items,\n  menu_items_formatted: menuItemsFormatted,\n  subtotal: totalAmount.toFixed(2),\n  tax_amount: taxAmount.toFixed(2),\n  final_total: finalTotal.toFixed(2),\n  quote_status: 'pending_review',\n  secure_token: secureToken,\n  created_at: new Date().toISOString()\n};\n\n// Store in TEMPORARY workflow memory (only until approval)\nglobal.pendingQuotes = global.pendingQuotes || {};\nglobal.pendingQuotes[quoteData.request_id] = quoteData;\n\nreturn { json: quoteData };"
+      },
+      "id": "f62492bd-53ac-4034-959b-7bea3c55155f",
+      "name": "2. Process & Generate Token (Temp Storage)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "folderId": "1gbvx0WLd9RZtxU33pk5db7oLC99BXQ3Z",
+        "title": "Catering Quote - {{ $json.request_id }}"
+      },
+      "id": "e4782b12-90bc-4241-b5c1-746c8dca7252",
+      "name": "3. Create Google Doc Quote",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -1072,
+        -256
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "qsqX7VvgZQ2WYGJo",
+          "name": "Google Docs account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "recipientPhoneNumber": "16468250005"
+      },
+      "id": "fbbabe11-4b07-495b-88c3-8eb5c62b17e4",
+      "name": "4. Notify Manager - WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -256
+      ],
+      "webhookId": "3d6495d4-6dd2-4d12-8b76-a3f95e45d571",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "gwbR7X4eTd3kcUzZ",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "success",
+          "message": "Catering request received successfully",
+          "request_id": "={{ $json.request_id }}"
+        },
+        "options": {}
+      },
+      "id": "448b2dce-4c15-4a0b-af6d-7a73b595bf92",
+      "name": "5. Response to Square",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "get-quote",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "605ba95a-a54a-4ed6-b2d4-989097462d9a",
+      "name": "6. Get Quote Data Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        -48
+      ],
+      "webhookId": "81a87f56-2f75-4b4b-841c-ba104ccc5c71"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle quote data retrieval for web form (from TEMPORARY storage)\nconst query = $input.first().json.query;\nconst requestId = query.id;\nconst token = query.token;\n\n// Retrieve from temporary storage (pending quotes)\nconst storedQuote = global.pendingQuotes && global.pendingQuotes[requestId];\n\nif (!storedQuote) {\n  throw new Error('Quote not found or may have been processed already');\n}\n\nif (storedQuote.secure_token !== token) {\n  throw new Error('Invalid access token');\n}\n\nreturn { json: storedQuote };"
+      },
+      "id": "c6fa893d-7747-45d4-85df-b1e816b697ef",
+      "name": "7. Validate & Return Quote (Temp)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "bed51ff6-a311-462a-9a9c-eb433675052d",
+      "name": "8. Return Quote to Web Form",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "approve-quote",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "5bd39ea0-7b38-4178-86ed-3806e5ea4ce0",
+      "name": "9. Approve Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        160
+      ],
+      "webhookId": "ac496502-8533-497c-a62f-d758eff56e80"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process quote approval and prepare for PERMANENT storage\nconst approvedQuote = $input.first().json.body;\nconst requestId = approvedQuote.request_id;\n\n// Get the original quote from temporary storage\nconst originalQuote = global.pendingQuotes && global.pendingQuotes[requestId];\nif (!originalQuote) {\n  throw new Error('Original quote not found in temporary storage');\n}\n\n// Merge original data with any updates from the approval\nconst finalQuoteData = {\n  ...originalQuote,\n  ...approvedQuote,\n  quote_status: 'approved',\n  approved_at: new Date().toISOString()\n};\n\n// Recalculate totals with updated menu items\nlet totalAmount = 0;\nlet menuItemsFormatted = '';\n\nfinalQuoteData.menu_items.forEach(item => {\n  const itemTotal = item.quantity * item.price;\n  totalAmount += itemTotal;\n  menuItemsFormatted += `• ${item.name} - Qty: ${item.quantity} @ $${item.price} = $${itemTotal.toFixed(2)}\\n`;\n});\n\nconst taxAmount = totalAmount * 0.13;\nconst finalTotal = totalAmount + taxAmount;\n\n// Final data ready for permanent storage\nconst quoteForDatabase = {\n  ...finalQuoteData,\n  menu_items_formatted: menuItemsFormatted,\n  subtotal: totalAmount.toFixed(2),\n  tax_amount: taxAmount.toFixed(2),\n  final_total: finalTotal.toFixed(2)\n};\n\nreturn { json: quoteForDatabase };"
+      },
+      "id": "ef80e4c0-25c2-4a31-91e1-7392825bf62f",
+      "name": "10. Process Quote Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "quotes",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "19ca1a08-73ec-43c8-9448-b6423d05acbf",
+      "name": "11. Store Approved Quote in Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        160
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "4swG9uZAYKjS9fYy",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "quote_menu_items",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "4de38aa5-24e0-4f3e-acca-35ef6d64ce36",
+      "name": "12. Store Menu Items in Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        160
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "4swG9uZAYKjS9fYy",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clean up temporary storage after successful permanent storage\nconst requestId = $json.request_id;\n\n// Remove from temporary storage\nif (global.pendingQuotes && global.pendingQuotes[requestId]) {\n  delete global.pendingQuotes[requestId];\n}\n\n// Pass the data forward for email notification\nreturn { json: $json };"
+      },
+      "id": "5bf2ed54-bcc5-4d25-b684-67d6a56053fc",
+      "name": "13. Cleanup Temporary Storage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "subject": "Your Approved Catering Quote - {{ $json.request_id }} | Nutmeg Creole Kitchen",
+        "options": {}
+      },
+      "id": "1802ea5d-247c-4c85-8537-3a82ee654035",
+      "name": "14. Send Approval Email to Customer",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        160
+      ],
+      "webhookId": "21f386af-0563-4f59-be06-76581186b5a3"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "status": "success",
+          "message": "Quote approved and stored successfully",
+          "quote_id": "={{ $('store-approved-quote').item.json.id }}"
+        },
+        "options": {}
+      },
+      "id": "b73ef7f7-04cf-44f5-8d8a-31916fc5d943",
+      "name": "15. Approval Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$json.menu_items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        160
+      ],
+      "id": "33a6c3eb-2039-47d5-ba5c-f5a1ee6fa81f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "content": "## Receive Catering Order / Send Quote \n1. Place catering order in \"Folder\" in Google Drive\n2. Notify technical support with any errors",
+        "height": 768,
+        "width": 1584
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1536,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "c2d1c0c9-d71e-4ddd-bc22-7c25f5f8fafd",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "10. Process Quote Approval": {
+      "main": [
+        []
+      ]
+    },
+    "5. Response to Square": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "2d383255-313c-4cd4-a808-4abbbf5052c7",
+  "meta": {
+    "templateId": "1954",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "77e7f64225d37b4a04ccd4430249802728e13171f35d4d2b3f1a8509f57c6ece"
+  },
+  "id": "Lw8rzteyylpktRuS",
+  "tags": []
+}
